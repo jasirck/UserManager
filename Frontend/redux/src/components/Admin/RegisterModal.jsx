@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import axios from "../../axios";
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from "react-redux";
+import Swal from 'sweetalert2'; // Import SweetAlert2
 
 function RegisterModal({ showModal, closeModal }) {
-  const token = useSelector(state => state.usermanage.token);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
@@ -75,8 +74,16 @@ function RegisterModal({ showModal, closeModal }) {
         first_name: '',
         last_name: '',
         password2: ''
-      })
-      alert('User Registered Successfully');
+      });
+      
+      // SweetAlert success message
+      Swal.fire({
+        icon: 'success',
+        title: 'User Registered Successfully',
+        showConfirmButton: false,
+        timer: 1500
+      });
+
       closeModal(); // Close modal after successful registration
       navigate('/admin'); // Navigate to login page
     } catch (err) {
@@ -106,7 +113,7 @@ function RegisterModal({ showModal, closeModal }) {
               <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                 <h3 className="text-lg leading-6 font-medium text-gray-900">Register</h3>
                 <div className="mt-2">
-                  <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit}>
                     <div className="mb-4">
                       <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
                         Username

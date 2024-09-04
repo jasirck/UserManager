@@ -10,6 +10,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate
 from rest_framework.permissions import IsAuthenticated,IsAdminUser  
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 
@@ -63,7 +64,6 @@ class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
 
 
-from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class UserProfileView(APIView):
     print('UserProfileView.=====')
@@ -77,10 +77,12 @@ class UserProfileView(APIView):
 
     def put(self, request):
         user = request.user
+        print(request.data)
         serializer = CustomUserSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
+        print("Validation Errors:", serializer.errors)
         return Response(serializer.errors, status=400)
 
 

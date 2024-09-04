@@ -11,5 +11,8 @@ urlpatterns = [
     path('api/', include('usermanage.urls')),
     path('token/obtain/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
-]+  static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('api/', include('todo.urls')),
+    path('api/', include('downloader.urls')),
+]
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

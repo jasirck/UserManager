@@ -5,6 +5,8 @@ import EditModal from "./EditModal";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../toolkit/slice";
+import Swal from 'sweetalert2';
+  
 
 function Admin() {
   const [userData, setUserData] = useState(null);
@@ -40,7 +42,7 @@ function Admin() {
     if (token) {
       fetchData();
     }
-  }, [token, showRegisterModal, showEditModal, dispatch, navigate]);
+  }, [token,is_admin, showRegisterModal, showEditModal, dispatch, navigate]);
 
   const openRegisterModal = () => {
     setShowRegisterModal(true);
@@ -68,21 +70,44 @@ function Admin() {
   };
 
   const handleDeleteUser = async (userId) => {
-    try {
-      await axios.delete(`/admin/${userId}/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      // Update state after deletion
-      setUserData(userData.filter((user) => user.id !== userId));
-    } catch (error) {
-      console.error("Error deleting user:", error);
-    }
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axios.delete(`/admin/${userId}/`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          // Update state after deletion
+          setUserData(userData.filter((user) => user.id !== userId));
+          Swal.fire(
+            'Deleted!',
+            'The user has been deleted.',
+            'success'
+          );
+        } catch (error) {
+          console.error("Error deleting user:", error);
+          Swal.fire(
+            'Error!',
+            'There was an issue deleting the user.',
+            'error'
+          );
+        }
+      }
+    });
   };
+  
 
   return (
-    <div className="bg-gray-200 h-fu flex flex-col">
+    <div className="bg-gray-200 min-h-screen   flex flex-col">
       <div className="bg-slate-700 w-full h-16 flex items-center shadow-md px-6 justify-between">
         <div className="flex items-center">
           <h1 className="text-white text-2xl mr-4">Admin Dashboard</h1>

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import axios from '../../axios';
 import { useSelector } from 'react-redux';
+import Swal from 'sweetalert2'; // Import SweetAlert2
 
 function EditModal({ showModal, closeModal, userData }) {
-  const token = useSelector(state => state.usermanage.token);
+  const token = useSelector((state) => state.usermanage.token);
   const [formData, setFormData] = useState({
     id: userData.id,
     email: userData.email,
@@ -11,7 +12,6 @@ function EditModal({ showModal, closeModal, userData }) {
     phone: userData.phone,
     first_name: userData.first_name,
     last_name: userData.last_name,
-    // is_active: userData.is_active,
     is_superuser: userData.is_superuser,
     is_staff: userData.is_staff,
   });
@@ -25,24 +25,41 @@ function EditModal({ showModal, closeModal, userData }) {
     try {
       await axios.put(`/admin/${formData.id}/`, formData, {
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
+      Swal.fire('Success', 'User updated successfully!', 'success'); // Success alert
       closeModal(); // Close modal after successful update
     } catch (error) {
       console.error('Error updating user:', error);
-      alert('Failed to update user. Please try again.');
+      Swal.fire('Error', 'Failed to update user. Please try again.', 'error'); // Error alert
     }
   };
 
   const handleDelete = async () => {
     try {
-      const response = await axios.delete(`/admin/${formData.id}/`);
-      console.log('User deleted:', response.data);
-      closeModal(); // Close modal after successful deletion
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: 'You will not be able to recover this user!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, keep it',
+      });
+
+      if (result.isConfirmed) {
+        const response = await axios.delete(`/admin/${formData.id}/`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log('User deleted:', response.data);
+        Swal.fire('Deleted!', 'User has been deleted.', 'success'); // Success alert
+        closeModal(); // Close modal after successful deletion
+      }
     } catch (error) {
       console.error('Error deleting user:', error);
-      alert('Failed to delete user. Please try again.');
+      Swal.fire('Error', 'Failed to delete user. Please try again.', 'error'); // Error alert
     }
   };
 
@@ -55,7 +72,9 @@ function EditModal({ showModal, closeModal, userData }) {
               <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
             </div>
 
-            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
+              &#8203;
+            </span>
 
             <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
               <form onSubmit={handleSubmit}>
@@ -131,21 +150,6 @@ function EditModal({ showModal, closeModal, userData }) {
                             onChange={handleChange}
                           />
                         </div>
-                        {/* <div className="mb-4">
-                          <label htmlFor="is_active" className="block text-sm font-medium text-gray-700">
-                            Status
-                          </label>
-                          <select
-                            name="is_active"
-                            id="is_active"
-                            className="mt-1 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                            value={formData.is_active}
-                            onChange={handleChange}
-                          >
-                            <option value={true}>Active</option>
-                            <option value={false}>Inactive</option>
-                          </select>
-                        </div> */}
                         <div className="mb-4">
                           <label htmlFor="is_superuser" className="block text-sm font-medium text-gray-700">
                             Superuser

@@ -4,6 +4,8 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# import dj_database_url
+
 
 SECRET_KEY = 'django-insecure-!)i85#8@4dnb!2npp569_pp(jvjzi+^9v(ev#m_lks6fuqgygp'
 
@@ -23,6 +25,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
+    'todo',
+    'downloader'
 ]
 
 REST_FRAMEWORK = {
@@ -65,9 +69,12 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:3000",
-# ]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+
+
+CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -99,6 +106,19 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'usermanage',  
+#         'USER': 'jasir',       
+#         'PASSWORD': 'rRyGLs7IqlFiPQX3TooyWiw2ZzwoCepA', 
+#         'HOST': 'dpg-cqjm14aj1k6c739uv4p0-a.singapore-postgres.render.com', 
+#         'PORT': '5432', 
+#     }
+# }
+
+
+# DATABASES["default"] = dj_database_url.parse("postgresql://jasir:rRyGLs7IqlFiPQX3TooyWiw2ZzwoCepA@dpg-cqjm14aj1k6c739uv4p0-a/usermanage")
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -128,6 +148,11 @@ USE_TZ = True
 
 
 STATIC_URL = 'static/'
+
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
+MEDIA_URL = "/media/"
+
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

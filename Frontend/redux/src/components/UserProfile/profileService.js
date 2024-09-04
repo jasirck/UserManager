@@ -1,8 +1,8 @@
-import axios from 'axios';
+import axios from '../../axios';
 
 const profileService = {
     getProfile: async (token) => {
-        const response = await axios.get('http://127.0.0.1:8000/api/profile/', {
+        const response = await axios.get('profile/', {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -11,9 +11,10 @@ const profileService = {
         return response.data;
     },
     updateProfile: async (profileData, token) => {
-        const response = await axios.put('http://127.0.0.1:8000/api/profile/', profileData, {
+        const response = await axios.put('profile/', profileData, {
             headers: {
-                Authorization: `Bearer ${token}`
+                'Content-Type'  : 'multipart/form-data',
+                'Authorization' : `Bearer ${token}`
             }
         });
         return response.data;
